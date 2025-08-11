@@ -22,7 +22,7 @@ Astrbot轻量级推送插件，提供api服务。目前仅支持发送文本消�
 {
   "content": "消息内容或base64编码的图片",
   "umo": "目标会话标识",
-  "type": "可选，消息类型，默认为text，可选值：text, image",
+  "message_type": "可选，消息类型，默认为text，可选值：text, image",
   "callback_url": "可选，处理结果回调URL"
 }
 ```
@@ -47,7 +47,7 @@ Astrbot轻量级推送插件，提供api服务。目前仅支持发送文本消�
 
 **Request Body (Form):**  
 ```text
-content=消息内容或base64编码的图片&umo=目标会话标识&type=可选，消息类型，默认为text，可选值：text, image&callback_url=可选，处理结果回调URL
+content=消息内容或base64编码的图片&umo=目标会话标识&message_type=可选，消息类型，默认为text，可选值：text, image&callback_url=可选，处理结果回调URL
 ```
 
 **Response:**  
