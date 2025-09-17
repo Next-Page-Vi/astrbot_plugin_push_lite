@@ -4,7 +4,6 @@ import uuid
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from quart import Quart, abort, jsonify, request
-from urllib.parse import parse_qs
 
 from astrbot.api import logger
 
@@ -35,57 +34,21 @@ class PushAPIServer:
             auth_header = request.headers.get("Authorization")
             if not auth_header or auth_header != f"Bearer {self.token}":
                 logger.warning(f"来自 {request.remote_addr} 的令牌无效")
-                abort(403, description="无效令牌")
+                abort(403, description=f"来自 {request.remote_addr} 的令牌无效")
 
             data = await request.get_json()
             if not data:
-                abort(400, description="无效的 JSON")
+                logger.warning(f"来自 {request.remote_addr} 的 JSON 无效")
+                abort(400, description=f"来自 {request.remote_addr} 的 JSON 无效")
 
-            required_fields = {"content", "umo"}
-            if missing := required_fields - data.keys():
-                abort(400, description=f"缺少字段: {missing}")
-
-            message = {
-                "message_id": data.get("message_id", str(uuid.uuid4())),
-                "content": data["content"],
-                "umo": data["umo"],
-                "type": data.get("message_type", "text"),
-                "callback_url": data.get("callback_url"),
-            }
-
-            self.in_queue.put(message)
-            logger.info(f"消息已排队: {message['message_id']}")
-
-            return jsonify(
-                {
-                    "status": "queued",
-                    "message_id": message["message_id"],
-                    "queue_size": self.in_queue.qsize(),
-                }
-            )
-
-        @self.app.route("/send_form", methods=["POST"])
-        async def send_form_endpoint():
-            auth_header = request.headers.get("Authorization")
-            if not auth_header or auth_header != f"Bearer {self.token}":
-                logger.warning(f"来自 {request.remote_addr} 的令牌无效")
-                abort(403, description="无效令牌")
-
-            params_form = await request.get_data(as_text=True)
-            params = parse_qs(params_form)
-            data = {k: v[0] for k, v in params.items()}
-            if not data:
-                abort(400, description="无效的 Form Data")
-
-            required_fields = {"content", "umo"}
-            if missing := required_fields - data.keys():
-                abort(400, description=f"缺少字段: {missing}")
+            if len(data) == 0:
+                logger.warning(f"来自 {request.remote_addr} 的请求体为空")
+                abort(400, description=f"来自 {request.remote_addr} 的请求体为空")
 
             message = {
                 "message_id": data.get("message_id", str(uuid.uuid4())),
-                "content": data["content"],
-                "umo": data["umo"],
-                "type": data.get("message_type", "text"),
+                "content": data.get("content"),
+                "image": data.get("image"),
                 "callback_url": data.get("callback_url"),
             }
 

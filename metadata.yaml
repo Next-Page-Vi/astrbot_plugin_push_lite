@@ -1,6 +1,6 @@
 name: astrbot_plugin_push_lite
-desc: Astrbot轻量级推送插件
+desc: Astrbot轻量级推送插件(增强版)
 help: 无
-version: v0.2.1
-author: Raven95676
-repo: https://github.com/Raven95676/astrbot_plugin_push_lite
+version: v0.1.0
+author: Next-Page-Vi/Raven95676
+repo: https://github.com/Next-Page-Vi/astrbot_plugin_push_lite
